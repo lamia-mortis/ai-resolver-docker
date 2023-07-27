@@ -3,7 +3,7 @@ services:
   mongodb:
     image: mongo:6.0.8
     ports: 
-      - 27017:27017
+      - "27018:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
@@ -12,6 +12,8 @@ services:
 
   ai-resolver-main:
     build: ./ai-resolver-main/
+    ports: 
+      - "8088:8000"
     environment: 
       - MAIN_APP_ID=${MAIN_APP_ID}
       - MAIN_PROTOCOL=${MAIN_PROTOCOL}
@@ -27,7 +29,7 @@ services:
       - DB_HOST=mongodb
       - DB_NAME=ai_resolver
     volumes:
-      - ${LOCAL_PATH}/ai-resolver-main:/var/www
+      - ${LOCAL_PATH}:/var/www
       - ${LOCAL_PATH}/composer:/root/.cache/composer
     links:
       - ai-resolver-mind-ms
@@ -35,6 +37,8 @@ services:
 
   ai-resolver-mind-ms:
     build: ./ai-resolver-mind-ms/
+    ports: 
+      - "8888:8888"
     environment:
       - MIND_MICROSERVICE_PROTOCOL=${MIND_MICROSERVICE_PROTOCOL}
       - MIND_MICROSERVICE_HOST=${MIND_MICROSERVICE_HOST}
@@ -42,6 +46,4 @@ services:
 
       - VERSION_BRANCH=${VERSION_BRANCH:-master}
     volumes:
-      - ${LOCAL_PATH}/ai-resolver-mind-ms:/var/www
-    links:  
-      - ai-resolver-main
+      - ${LOCAL_PATH}:/var/www
